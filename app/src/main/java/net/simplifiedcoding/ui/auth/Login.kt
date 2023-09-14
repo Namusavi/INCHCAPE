@@ -1,181 +1,139 @@
 package net.simplifiedcoding.ui.auth
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import android.os.Bundle
+
+import android.os.Parcel
+import android.os.Parcelable
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import net.simplifiedcoding.R
-import net.simplifiedcoding.data.Resource
-import net.simplifiedcoding.navigation.ROUTE_HOME
-import net.simplifiedcoding.navigation.ROUTE_LOGIN
-import net.simplifiedcoding.navigation.ROUTE_SIGNUP
-import net.simplifiedcoding.ui.theme.AppTheme
-import net.simplifiedcoding.ui.theme.spacing
+import androidx.compose.material3.Text as Text1
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LoginScreen(viewModel: AuthViewModel?, navController: NavController) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+class LoginActivity : ComponentActivity(), Parcelable {
 
-    val loginFlow = viewModel?.loginFlow?.collectAsState()
 
-    ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            Loginpage()
+        }
 
-        val (refHeader, refEmail, refPassword, refButtonLogin, refTextSignup, refLoader) = createRefs()
-        val spacing = MaterialTheme.spacing
 
-        Box(
+    }
+
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<LoginActivity> {
+        override fun createFromParcel(parcel: Parcel): LoginActivity {
+            return LoginActivity()
+        }
+
+        override fun newArray(size: Int): Array<LoginActivity?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Preview(showBackground = true)
+    @Composable
+    fun Loginpage() {
+
+        val username by remember {
+            mutableStateOf("")
+        }
+        val password by remember {
+            mutableStateOf("")
+        }
+        Column(
             modifier = Modifier
-                .constrainAs(refHeader) {
-                    top.linkTo(parent.top, spacing.extraLarge)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                }
-                .wrapContentSize()
+                .background(Color.White)
+                .fillMaxSize() ,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
+
         ) {
-            AuthHeader()
-        }
 
+            Image(painter = painterResource(id = R.drawable.inchcapelogo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(400.dp)
+                    .fillMaxWidth()
 
-        TextField(
-            value = email,
-            onValueChange = {
-                email = it
-            },
-            label = {
-                Text(text = stringResource(id = R.string.email))
-            },
-            modifier = Modifier.constrainAs(refEmail) {
-                top.linkTo(refHeader.bottom, spacing.extraLarge)
-                start.linkTo(parent.start, spacing.large)
-                end.linkTo(parent.end, spacing.large)
-                width = Dimension.fillToConstraints
-            },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrect = false,
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
             )
-        )
+            Text1(text = "Welcome to Inchcape Motors", color = Color.Black, fontSize = 30.sp)
+            OutlinedTextField(
+                value = username,
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription ="Username Icon" )},
+                onValueChange = { username },
+                label = { Text1(text = "Username") },
+                modifier = Modifier.fillMaxWidth()
 
-        TextField(
-            value = password,
-            onValueChange = {
-                password = it
-            },
-            label = {
-                Text(text = stringResource(id = R.string.password))
-            },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.constrainAs(refPassword) {
-                top.linkTo(refEmail.bottom, spacing.medium)
-                start.linkTo(parent.start, spacing.large)
-                end.linkTo(parent.end, spacing.large)
-                width = Dimension.fillToConstraints
-            },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrect = false,
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
             )
-        )
 
-        Button(
-            onClick = {
-                viewModel?.login(email, password)
-            },
-            modifier = Modifier.constrainAs(refButtonLogin) {
-                top.linkTo(refPassword.bottom, spacing.large)
-                start.linkTo(parent.start, spacing.extraLarge)
-                end.linkTo(parent.end, spacing.extraLarge)
-                width = Dimension.fillToConstraints
+            Spacer(modifier = Modifier.height(21.dp))
+
+            OutlinedTextField(
+                value = password,
+                leadingIcon = { Icon(Icons.Default.Lock, contentDescription ="passIcon" )},
+                onValueChange = { password },
+                label = { Text1(text = "Password") },
+                modifier = Modifier
+                    .fillMaxWidth()
+
+            )
+            Spacer(modifier = Modifier.height(21.dp))
+            Button(onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+
+            ) {
+                Text(text = "Login")
             }
-        ) {
-            Text(text = stringResource(id = R.string.login), style = MaterialTheme.typography.titleMedium)
-        }
-
-
-        Text(
-            modifier = Modifier
-                .constrainAs(refTextSignup) {
-                    top.linkTo(refButtonLogin.bottom, spacing.medium)
-                    start.linkTo(parent.start, spacing.extraLarge)
-                    end.linkTo(parent.end, spacing.extraLarge)
-                }
-                .clickable {
-                    navController.navigate(ROUTE_SIGNUP) {
-                        popUpTo(ROUTE_LOGIN) { inclusive = true }
-                    }
-                },
-            text = stringResource(id = R.string.dont_have_account),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        loginFlow?.value?.let {
-            when (it) {
-                is Resource.Failure -> {
-                    val context = LocalContext.current
-                    Toast.makeText(context, it.exception.message, Toast.LENGTH_LONG).show()
-                }
-                Resource.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.constrainAs(refLoader) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    })
-                }
-                is Resource.Success -> {
-                    LaunchedEffect(Unit) {
-                        navController.navigate(ROUTE_HOME) {
-                            popUpTo(ROUTE_LOGIN) { inclusive = true }
-                        }
-                    }
-                }
+            Spacer(modifier = Modifier.height(21.dp))
+            Button(onClick = { /*TODO*/ },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "SignUp")
             }
+
+
         }
     }
 }
 
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_NO)
-@Composable
-fun LoginScreenPreviewLight() {
-    AppTheme {
-        LoginScreen(null, rememberNavController())
-    }
-}
-
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun LoginScreenPreviewDark() {
-    AppTheme {
-        LoginScreen(null, rememberNavController())
-    }
-}
